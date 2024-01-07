@@ -12,7 +12,8 @@ class BusinessUnitController extends Controller
      */
     public function index()
     {
-        //
+        $businessUnits = BusinessUnit::all();
+        return view("businessUnit.index",compact('businessUnits'));
     }
 
     /**
@@ -20,7 +21,7 @@ class BusinessUnitController extends Controller
      */
     public function create()
     {
-        //
+        return view("businessUnit.create");
     }
 
     /**
@@ -28,7 +29,16 @@ class BusinessUnitController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:business_units',
+            'phoneNo' => 'required',
+            // Add other validation rules as needed
+        ]);
+
+        BusinessUnit::create($validatedData);
+
+        return redirect('/business_units')->with('success', 'Business Unit created successfully');
     }
 
     /**
@@ -36,7 +46,7 @@ class BusinessUnitController extends Controller
      */
     public function show(BusinessUnit $businessUnit)
     {
-        //
+        return view("businessUnit.show", compact('businessUnit'));
     }
 
     /**
@@ -44,7 +54,7 @@ class BusinessUnitController extends Controller
      */
     public function edit(BusinessUnit $businessUnit)
     {
-        //
+        return view("businessUnit.edit", compact('businessUnit'));
     }
 
     /**
@@ -52,7 +62,16 @@ class BusinessUnitController extends Controller
      */
     public function update(Request $request, BusinessUnit $businessUnit)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:business_units,email,'.$businessUnit->id,
+
+            'phoneNo' => 'required',
+            // Add other validation rules as needed
+        ]);
+
+        $businessUnit->update($validatedData);
+        return redirect('/business_units')->with('success', 'Business Unit updated successfully');
     }
 
     /**
@@ -60,6 +79,7 @@ class BusinessUnitController extends Controller
      */
     public function destroy(BusinessUnit $businessUnit)
     {
-        //
+        $businessUnit->delete();
+        return redirect('/business_units')->with('success', 'Business Unit deleted successfully');
     }
 }

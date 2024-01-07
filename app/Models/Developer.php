@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class BusinessUnit extends Model
+class Developer extends Model
 {
     use HasFactory;
-
-    protected $fillable = ['name', 'email', 'phoneNo' /* Other fillable attributes */];
+    protected $fillable = ['name', 'email', /* Other fillable attributes */];
 
     public function projects()
     {
