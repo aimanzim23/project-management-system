@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use App\Models\System;
+use App\Policies\SystemPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        System::class => SystemPolicy::class,
     ];
 
     /**
@@ -21,6 +23,14 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::define('isBusinessUnit', function ($user){
+            return $user->user_level == 0;
+        });
+        Gate::define('isManager', function ($user){
+            return $user->user_level == 3;
+        });
+        Gate::define('isDeveloper', function ($user){
+            return $user->user_level == 5;
+        });
     }
 }

@@ -8,6 +8,22 @@
                 <div class="card-header">Edit System Information</div>
                 <div class="card-body">
                     <div class="form-group row mb-3">
+                        <div class="form-group row mb-3">
+                            <label for="business_unit_id" class="col-sm-2 col-form-label">Business Unit</label>
+                            <div class="col-sm-10">
+                                <select name="business_unit_id" class="form-select" id="business_unit_id">
+                                    <option value="">Select Business Unit</option>
+                                    @foreach ($businessUnits as $businessUnit)
+                                        <option value="{{ $businessUnit->id }}" {{ $system->business_unit_id == $businessUnit->id ? 'selected' : '' }}>
+                                            {{ $businessUnit->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('business_unit_id')
+                                <strong style="width: 100%; margin-top: 0.25rem; font-size: 80%;color: #e3342f;">{{ $message }}</strong>
+                                @enderror
+                            </div>
+                        </div>
                         <label for="name" class="col-sm-2 col-form-label">System Name</label>
                         <div class="col-sm-10">
                             <input type="text" name="name" class="form-control" id="name" value="{{ $system->name }}">

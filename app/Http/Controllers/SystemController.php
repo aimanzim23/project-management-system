@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\System;
+use App\Models\BusinessUnit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class SystemController extends Controller
 {
@@ -12,8 +14,13 @@ class SystemController extends Controller
      */
     public function index()
     {
-        $systems = System::all();
-        return view('system.index', compact('systems'));
+        if (Gate::allows('isBusinessUnit') || Gate::allows('isManager')){
+            $systems = System::all();
+            return view('system.index', compact('systems'));
+        }
+       else{
+           abort(403);
+       }
     }
 
     /**
@@ -21,7 +28,8 @@ class SystemController extends Controller
      */
     public function create()
     {
-        return view('system.create');
+        $businessUnits = BusinessUnit::all();
+        return view('system.create', compact('businessUnits'));
     }
 
     /**
@@ -30,6 +38,7 @@ class SystemController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'business_unit_id' => 'required|exists:business_units,id',
             'name' => 'required',
             'description' => 'required',
             // Add other validation rules as needed
@@ -45,6 +54,7 @@ class SystemController extends Controller
      */
     public function show(System $system)
     {
+        $system->load('businessUnit');
         return view('system.show', compact('system'));
     }
 
@@ -53,7 +63,8 @@ class SystemController extends Controller
      */
     public function edit(System $system)
     {
-        return view('system.edit', compact('system'));
+        $businessUnits = BusinessUnit::all();
+        return view('system.edit', compact('system', 'businessUnits'));
     }
 
     /**
@@ -62,6 +73,7 @@ class SystemController extends Controller
     public function update(Request $request, System $system)
     {
         $validatedData = $request->validate([
+            'business_unit_id' => 'required|exists:business_units,id',
             'name' => 'required',
             'description' => 'required',
             // Add other validation rules as needed

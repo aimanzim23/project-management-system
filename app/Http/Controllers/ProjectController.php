@@ -6,6 +6,7 @@ use App\Models\Developer;
 use App\Models\Project;
 use App\Models\Manager;
 use App\Models\BusinessUnit;
+use App\Models\System;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -27,7 +28,8 @@ class ProjectController extends Controller
         $managers = Manager::all();
         $developers = Developer::all();
         $businessUnits = BusinessUnit::all();
-        return view('project.create', compact('managers', 'developers', 'businessUnits'));
+        $systems = System::all();
+        return view('project.create', compact('managers', 'developers', 'businessUnits', 'systems'));
     }
 
     /**
@@ -41,16 +43,39 @@ class ProjectController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'duration' => 'required|in:7weeks,14weeks,21weeks,more',
-            'status' => 'required|in:Pending,Completed,In Progress',
-            'developer_id' => 'required|exists:developers,id',
+            'status' => 'required|in:Pending,Ahead of Schedule,On Schedule,Delayed,Completed',
+            'developer_id' => 'required|array', // Accept an array of developer IDs
+            'developer_id.*' => 'exists:developers,id', // Validate each ID in the array
             'business_unit_id' => 'required|exists:business_units,id',
             'description' => 'required',
+            'system_id' => 'required|exists:systems,id',
+            'methodology' => 'required',
+            'platform' => 'required|in:Web-based,Mobile,Stand-alone',
+            'deployment_type' => 'required|in:Cloud,On-premise',
         ]);
 
-        Project::create($validatedData);
+        // Create the project
+        $project = Project::create([
+            'name' => $validatedData['name'],
+            'manager_id' => $validatedData['manager_id'],
+            'start_date' => $validatedData['start_date'],
+            'end_date' => $validatedData['end_date'],
+            'duration' => $validatedData['duration'],
+            'status' => $validatedData['status'],
+            'business_unit_id' => $validatedData['business_unit_id'],
+            'description' => $validatedData['description'],
+            'methodology' => $validatedData['methodology'],
+            'platform' => $validatedData['platform'],
+            'deployment_type' => $validatedData['deployment_type'],
+        ]);
+
+        // Attach multiple developers to the project
+        $selectedDeveloperIds = $validatedData['developer_id'];
+        $project->developers()->attach($selectedDeveloperIds);
 
         return redirect('/projects')->with('success', 'Project created successfully');
     }
+
 
     /**
      * Display the specified resource.
@@ -58,8 +83,9 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
 
-        $project->load('manager', 'developer', 'businessUnit');
-        return view("project.show", compact('project'));
+        $project->load('manager', 'developers', 'businessUnit','progressReports');
+        $progressReports = $project->progressReports;
+        return view("project.show", compact('project', 'progressReports'));
     }
 
     /**
@@ -84,16 +110,40 @@ class ProjectController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'duration' => 'required|in:7weeks,14weeks,21weeks,more',
-            'status' => 'required|in:Pending,Completed,In Progress',
-            'developer_id' => 'required|exists:developers,id',
+            'status' => 'required|in:Pending,Ahead of Schedule,On Schedule,Delayed,Completed',
+            'developer_id' => 'required|array', // Accept an array of developer IDs
+            'developer_id.*' => 'exists:developers,id', // Validate each ID in the array
             'business_unit_id' => 'required|exists:business_units,id',
             'description' => 'required',
+            'system_id' => 'required|exists:systems,id',
+            'methodology' => 'required',
+            'platform' => 'required|in:Web-based,Mobile,Stand-alone',
+            'deployment_type' => 'required|in:Cloud,On-premise',
         ]);
 
-        $project->update($validatedData);
+        // Update the project attributes
+        $project->update([
+            'name' => $validatedData['name'],
+            'manager_id' => $validatedData['manager_id'],
+            'start_date' => $validatedData['start_date'],
+            'end_date' => $validatedData['end_date'],
+            'duration' => $validatedData['duration'],
+            'status' => $validatedData['status'],
+            'business_unit_id' => $validatedData['business_unit_id'],
+            'description' => $validatedData['description'],
+            'system_id' => $validatedData['system_id'],
+            'methodology' => $validatedData['methodology'],
+            'platform' => $validatedData['platform'],
+            'deployment_type' => $validatedData['deployment_type'],
+        ]);
+
+        // Sync developers for the project
+        $selectedDeveloperIds = $validatedData['developer_id'];
+        $project->developers()->sync($selectedDeveloperIds);
 
         return redirect('/projects')->with('success', 'Project updated successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.
@@ -101,6 +151,6 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         $project->delete();
-        return redirect('/project')->with('success', 'Project deleted successfully');
+        return redirect('/projects')->with('success', 'Project deleted successfully');
     }
 }

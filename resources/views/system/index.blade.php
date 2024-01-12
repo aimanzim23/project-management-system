@@ -11,7 +11,9 @@
             <h1>Systems</h1>
         </div>
         <div class="card-body">
-            <a class="btn btn-primary float-end" href="{{ route('system.create') }}">Add New</a>
+            @if (Gate::allows('isBusinessUnit'))
+                <a class="btn btn-primary float-end" href="{{ route('system.create') }}">Add New</a>
+            @endif
             <table class="table">
                 <thead>
                 <tr>
@@ -33,8 +35,10 @@
                                 @csrf
                                 @method('DELETE')
                                 <a class="btn btn-info" href="{{ route('system.show', $system) }}">Details</a>
-                                <a class="btn btn-warning" href="{{ route('system.edit', $system) }}">Edit</a>
-                                <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Confirm DELETE? this system {{ $system->name }}')">
+                                @if (Gate::allows('isBusinessUnit'))
+                                    <a class="btn btn-warning" href="{{route('system.edit',$system->id)}}">Edit</a>
+                                    <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Confirm DELETE? this student {{$system->name}}')">
+                                @endif
                             </form>
                         </td>
                     </tr>

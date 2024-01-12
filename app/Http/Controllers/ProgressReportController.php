@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ProgressReport;
+use App\Models\Project;
+use App\Models\Developer;
+use App\Models\System;
 use Illuminate\Http\Request;
 
 class ProgressReportController extends Controller
@@ -12,7 +15,8 @@ class ProgressReportController extends Controller
      */
     public function index()
     {
-        return view('progressReport.index');
+        $progressReports = ProgressReport::all();
+        return view('progressReport.index', compact('progressReports'));
     }
 
     /**
@@ -20,7 +24,9 @@ class ProgressReportController extends Controller
      */
     public function create()
     {
-        //
+        $projects = Project::all();
+        $developers = Developer::all();
+        return view('progressReport.create', compact('projects', 'developers'));
     }
 
     /**
@@ -28,7 +34,24 @@ class ProgressReportController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'developer_id' => 'required|exists:developers,id',
+            'date' => 'required|date',
+            'status' => 'required|in:Ahead of Schedule,On Schedule,Delayed,Completed',
+            'description' => 'required',
+        ]);
+
+        $progressReport = ProgressReport::create($validatedData);
+
+        // Fetch the related project
+        $project = Project::find($validatedData['project_id']);
+
+        // Update the project status based on the progress report status
+        $project->status = $validatedData['status'];
+        $project->save();
+
+        return redirect()->route('progressReport.index')->with('success', 'Progress Report created successfully');
     }
 
     /**
@@ -36,7 +59,7 @@ class ProgressReportController extends Controller
      */
     public function show(ProgressReport $progressReport)
     {
-        //
+        return view('progressReport.show', compact('progressReport'));
     }
 
     /**
@@ -44,22 +67,44 @@ class ProgressReportController extends Controller
      */
     public function edit(ProgressReport $progressReport)
     {
-        //
+        $projects = Project::all();
+        $developers = Developer::all();
+        return view('progressReport.edit', compact('progressReport', 'projects', 'developers'));
     }
 
     /**
      * Update the specified resource in storage.
-     */
-    public function update(Request $request, ProgressReport $progressReport)
+        */
+     public function update(Request $request, ProgressReport $progressReport)
     {
-        //
+        $validatedData = $request->validate([
+            'project_id' => 'required|exists:projects,id',
+            'developer_id' => 'required|exists:developers,id',
+            'date' => 'required|date',
+            'status' => 'required|in:Ahead of Schedule,On Schedule,Delayed,Completed',
+            'description' => 'required',
+        ]);
+
+        $progressReport->update($validatedData);
+
+        // Fetch the related project
+        $project = Project::find($validatedData['project_id']);
+
+        // Update the project status based on the progress report status
+        $project->status = $validatedData['status'];
+        $project->save();
+
+        return redirect()->route('progressReport.index')->with('success', 'Progress Report updated successfully');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(ProgressReport $progressReport)
     {
-        //
+        $progressReport->delete();
+
+        return redirect()->route('progressReport.index')->with('success', 'Progress Report deleted successfully');
     }
 }

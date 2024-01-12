@@ -10,6 +10,10 @@
                         <td>{{ $system->name }}</td>
                     </tr>
                     <tr>
+                        <td>Requested by</td>
+                        <td>{{ $system->businessUnit->name }} </td>
+                    </tr>
+                    <tr>
                         <td>Description</td>
                         <td>{{ $system->description }}</td>
                     </tr>

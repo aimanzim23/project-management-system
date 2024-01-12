@@ -10,7 +10,9 @@
             <h1>Business Unit</h1>
         </div>
         <div class="card-body">
-            <a class="btn btn-primary float-end" href="{{route('businessUnit.create')}}">Add New</a>
+            @if (Gate::allows('isBusinessUnit'))
+                <a class="btn btn-primary float-end" href="{{route('businessUnit.create')}}">Add New</a>
+            @endif
             <table class="table">
                 <thead>
                 <tr><th>No.</th><th>Business Unit</th><th>Email</th><th>Action</th></tr>
@@ -27,8 +29,10 @@
                                 @csrf
                                 @method('DELETE')
                                 <a class="btn btn-info" href="{{route('businessUnit.show',$businessUnit->id)}}">Details</a>
-                                <a class="btn btn-warning" href="{{route('businessUnit.edit',$businessUnit->id)}}">Edit</a>
-                                <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Confirm DELETE? this student {{$businessUnit->name}}')">
+                                @if (Gate::allows('isBusinessUnit'))
+                                    <a class="btn btn-warning" href="{{route('businessUnit.edit',$businessUnit->id)}}">Edit</a>
+                                    <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Confirm DELETE? this student {{$businessUnit->name}}')">
+                                @endif
                             </form>
                         </td>
                     </tr>

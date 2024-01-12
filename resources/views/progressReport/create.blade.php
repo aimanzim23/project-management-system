@@ -1,0 +1,87 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="container">
+        <form method="POST" action="{{ route('progressReport.store') }}">
+            @csrf
+            <div class="card mb-3">
+                <div class="card-header">Create Progress Report</div>
+                <div class="card-body">
+                    <div class="form-group row mb-3">
+                        <label for="project_id" class="col-sm-2 col-form-label">Project</label>
+                        <div class="col-sm-10">
+                            <select name="project_id" class="form-select" id="project_id">
+                                <option value="">Select Project</option>
+                                @foreach ($projects as $project)
+                                    <option value="{{ $project->id }}">{{ $project->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('project_id')
+                            <strong style="width: 100%; margin-top: 0.25rem; font-size: 80%;color: #e3342f;">{{ $message }}</strong>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3">
+                        <label for="developer_id" class="col-sm-2 col-form-label">Developer</label>
+                        <div class="col-sm-10">
+                            <select name="developer_id" class="form-select" id="developer_id">
+                                <option value="">Select Developer</option>
+                                @foreach ($developers as $developer)
+                                    <option value="{{ $developer->id }}">{{ $developer->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('developer_id')
+                            <strong style="width: 100%; margin-top: 0.25rem; font-size: 80%;color: #e3342f;">{{ $message }}</strong>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3">
+                        <label for="date" class="col-sm-2 col-form-label">Date</label>
+                        <div class="col-sm-10">
+                            <input type="date" name="date" class="form-control" id="date">
+                            @error('date')
+                            <strong style="width: 100%; margin-top: 0.25rem; font-size: 80%;color: #e3342f;">{{ $message }}</strong>
+                            @enderror
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row mb-3">
+                        <label for="status" class="col-sm-2 col-form-label">Status</label>
+                        <div class="col-sm-10">
+                            <select name="status" class="form-select" id="status">
+                                <option value="">Select Status</option>
+                                <option value="Ahead of Schedule">Ahead of Schedule</option>
+                                <option value="On Schedule">On Schedule</option>
+                                <option value="Delayed">Delayed</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                            @error('status')
+                            <strong style="width: 100%; margin-top: 0.25rem; font-size: 80%;color: #e3342f;">{{ $message }}</strong>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3">
+                        <label for="name" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea type="text" name="description" class="form-control" id="description" rows="5"></textarea>
+                            @error('description')
+                            <strong style="width: 100%; margin-top: 0.25rem; font-size: 80%;color: #e3342f;">{{ $message }}</strong>
+                            @enderror
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="text-center">
+                <a class="btn btn-warning" href="{{ route('progressReport.index') }}">Back</a>
+                <input class="btn btn-primary" type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+@endsection
+

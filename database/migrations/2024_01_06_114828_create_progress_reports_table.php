@@ -13,7 +13,16 @@ return new class extends Migration
     {
         Schema::create('progress_reports', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('project_id'); // Foreign Key referencing Project.id
+            $table->unsignedBigInteger('developer_id'); // Foreign Key referencing Developer.id
+            $table->date('date');
+            $table->string('status');
+            $table->string('description');
             $table->timestamps();
+
+            // Foreign key constraints
+            $table->foreign('project_id')->references('id')->on('projects');
+            $table->foreign('developer_id')->references('id')->on('developers');
         });
     }
 

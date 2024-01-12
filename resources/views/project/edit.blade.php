@@ -22,7 +22,7 @@
                             <select name="business_unit_id" class="form-select" id="business_unit_id">
                                 <option value="">Select Business Unit</option>
                                 @foreach ($businessUnits as $businessUnit)
-                                    <option value="{{ $businessUnit->id }}" {{ $project->business_unit_id == $businessUnit->id ? 'selected' : '' }}>
+                                    <option value="{{ $businessUnit->id }}" {{ $businessUnit->business_unit_id == $businessUnit->id ? 'selected' : '' }}>
                                         {{ $businessUnit->name }}
                                     </option>
                                 @endforeach
@@ -91,9 +91,10 @@
                         <div class="col-sm-10">
                             <select name="status" class="form-select" id="status">
                                 <option value="">Select Status</option>
-                                <option value="Pending" {{ $project->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="Ahead of Schedule" {{ $project->status == 'Ahead of Schedule' ? 'selected' : '' }}>Ahead of Schedule</option>
+                                <option value="On Schedule" {{ $project->status == 'Completed' ? 'selected' : '' }}>On Schedule</option>
+                                <option value="Delayed" {{ $project->status == 'Delayed' ? 'selected' : '' }}>Delayed</option>
                                 <option value="Completed" {{ $project->status == 'Completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="In Progress" {{ $project->status == 'In Progress' ? 'selected' : '' }}>In Progress</option>
                             </select>
                             @error('status')
                             <strong style="width: 100%; margin-top: 0.25rem; font-size: 80%;color: #e3342f;">{{ $message }}</strong>
@@ -103,19 +104,27 @@
 
                     <div class="form-group row mb-3">
                         <label for="developer_id" class="col-sm-2 col-form-label">Lead Developer</label>
-                        <div class="col-sm-10">
-                            <select name="developer_id" class="form-select" id="developer_id">
+                        <div class="col-sm-8">
+                            <select name="developer_id[]" class="form-select single-select" id="developer_id">
                                 <option value="">Select Developer</option>
                                 @foreach ($developers as $developer)
-                                    <option value="{{ $developer->id }}" {{ $project->developer_id == $developer->id ? 'selected' : '' }}>
-                                        {{ $developer->name }}
-                                    </option>
+                                    <option value="{{ $developer->id }}">{{ $developer->name }}</option>
                                 @endforeach
                             </select>
                             @error('developer_id')
                             <strong style="width: 100%; margin-top: 0.25rem; font-size: 80%;color: #e3342f;">{{ $message }}</strong>
                             @enderror
                         </div>
+                        <div class="col-sm-2">
+                            <button type="button" class="btn btn-primary add-developer">Add Developer</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2"></div> <!-- Empty column for spacing -->
+                        <div class="col-sm-8">
+                            <div class="my-3 ml-2" id="extra-developers"></div>
+                        </div>
+                        <div class="col-sm-2"></div> <!-- Empty column for spacing -->
                     </div>
 
                     <div class="form-group row mb-3">
@@ -136,4 +145,13 @@
             </div>
         </form>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.add-developer').on('click', function() {
+                let select = $('.single-select').last().clone();
+                $('#extra-developers').append(select);
+            });
+        });
+    </script>
 @endsection

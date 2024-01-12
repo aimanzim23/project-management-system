@@ -14,8 +14,11 @@ return new class extends Migration
         Schema::create('systems', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->unsignedBigInteger('business_unit_id');
             $table->string('description');
             $table->timestamps();
+
+            $table->foreign('business_unit_id')->references('id')->on('business_units');
         });
     }
 

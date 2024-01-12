@@ -15,4 +15,9 @@ class BusinessUnit extends Model
     {
         return $this->hasMany(Project::class);
     }
+
+    public function systems()
+    {
+        return $this->hasMany(System::class);
+    }
 }
