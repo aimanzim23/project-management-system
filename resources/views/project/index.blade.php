@@ -39,16 +39,30 @@
                             <td>{{ $project->status }}</td>
                             <td>{{ $project->created_at->format('Y-m-d') }}</td>
                             <td>
-                                <form action="{{ route('project.destroy', $project->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <a class="btn btn-info" href="{{ route('project.show', $project->id) }}">Details</a>
-                                    @if (Gate::allows('isBusinessUnit') || Gate::allows('isManager'))
-                                        <a class="btn btn-warning" href="{{route('project.edit',$project->id)}}">Edit</a>
-                                        <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Confirm DELETE? this student {{$project->name}}')">
-                                    @endif
-                                </form>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ $i }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fas fa-cogs"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $i }}">
+                                        <a class="dropdown-item" href="{{ route('project.show', $project->id) }}">
+                                            <i class="fas fa-eye"></i> Details
+                                        </a>
+                                        @if (Gate::allows('isBusinessUnit') || Gate::allows('isManager'))
+                                            <a class="dropdown-item" href="{{ route('project.edit', $project->id) }}">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <form action="{{ route('project.destroy', $project->id) }}" method="POST">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="dropdown-item" onclick="return confirm('Confirm DELETE? This project {{$project->name}}')">
+                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                </div>
                             </td>
+
                         </tr>
                     @endforeach
                     </tbody>

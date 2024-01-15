@@ -28,14 +28,28 @@
                     <td>{{ $progressReport->status }}</td>
                     <td>{{ $progressReport->description }}</td>
                     <td>
-                        <form action="{{ route('progressReport.destroy', $progressReport) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <a class="btn btn-info" href="{{ route('progressReport.show', $progressReport) }}">Details</a>
-                            <a class="btn btn-warning" href="{{ route('progressReport.edit', $progressReport) }}">Edit</a>
-                            <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Confirm DELETE? this system {{ $progressReport->name }}')">
-                        </form>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ $progressReport }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-cogs"></i>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $progressReport }}">
+                                <a class="dropdown-item" href="{{ route('progressReport.show', $progressReport->id) }}">
+                                    <i class="fas fa-eye"></i> Details
+                                </a>
+                                <a class="dropdown-item" href="{{ route('progressReport.edit', $progressReport->id) }}">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form action="{{ route('progressReport.destroy', $progressReport->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="dropdown-item" onclick="return confirm('Confirm DELETE? This progress report {{ $progressReport->name }}')">
+                                        <i class="fas fa-trash-alt"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </td>
+
                 </tr>
             @endforeach
             </tbody>

@@ -25,16 +25,30 @@
                         <td>{{$manager->name}}</td>
                         <td>{{$manager->email}}</td>
                         <td>
-                            <form action="{{route('manager.destroy',$manager)}}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <a class="btn btn-info" href="{{route('manager.show',$manager->id)}}">Details</a>
-                                @if (Gate::allows('isBusinessUnit'))
-                                    <a class="btn btn-warning" href="{{route('manager.edit',$manager->id)}}">Edit</a>
-                                    <input class="btn btn-danger" type="submit" value="Delete" onclick="return confirm('Confirm DELETE? this student {{$manager->name}}')">
-                                @endif
-                            </form>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{ $i }}" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-cogs"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ $i }}">
+                                    <a class="dropdown-item" href="{{ route('manager.show', $manager->id) }}">
+                                        <i class="fas fa-eye"></i> Details
+                                    </a>
+                                    @if (Gate::allows('isBusinessUnit'))
+                                        <a class="dropdown-item" href="{{ route('manager.edit', $manager->id) }}">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <form action="{{ route('manager.destroy', $manager->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="dropdown-item" onclick="return confirm('Confirm DELETE? This manager {{$manager->name}}')">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
                         </td>
+
                     </tr>
                 @endforeach
                 </tbody>
